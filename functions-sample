@@ -1,0 +1,176 @@
+from typing import Any
+
+
+def validate_customer(customer: dict[str, Any]) -> bool:
+    """
+    Validate that a customer contains the required fields.
+
+    Args:
+        customer: Customer information.
+
+    Returns:
+        True if the customer is valid, otherwise False.
+    """
+    required_fields = ["id", "name", "age", "email"]
+
+    return all(
+        field in customer and customer[field] is not None
+        for field in required_fields
+    )
+
+
+def clean_name(name: str) -> str:
+    """
+    Clean a customer's name.
+
+    Args:
+        name: Customer name.
+
+    Returns:
+        Cleaned customer name.
+    """
+    return name.strip().title()
+
+
+def clean_email(email: str) -> str:
+    """
+    Clean an email address.
+
+    Args:
+        email: Customer email.
+
+    Returns:
+        Cleaned email address.
+    """
+    return email.strip().lower()
+
+
+def clean_customer(customer: dict[str, Any]) -> dict[str, Any]:
+    """
+    Clean customer data.
+
+    Args:
+        customer: Raw customer information.
+
+    Returns:
+        Cleaned customer information.
+    """
+    return {
+        **customer,
+        "name": clean_name(customer["name"]),
+        "email": clean_email(customer["email"]),
+    }
+
+
+def filter_adult_customers(
+    customers: list[dict[str, Any]],
+    minimum_age: int = 18,
+) -> list[dict[str, Any]]:
+    """
+    Return customers who meet the minimum age requirement.
+
+    Args:
+        customers: List of customer records.
+        minimum_age: Minimum customer age.
+
+    Returns:
+        List of customers who meet the age requirement.
+    """
+    return [
+        customer
+        for customer in customers
+        if customer["age"] >= minimum_age
+    ]
+
+
+def process_customers(
+    customers: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """
+    Validate and clean customer records.
+
+    Args:
+        customers: Raw customer records.
+
+    Returns:
+        Processed customer records.
+    """
+    processed_customers = []
+
+    for customer in customers:
+        if not validate_customer(customer):
+            continue
+
+        cleaned_customer = clean_customer(customer)
+
+        processed_customers.append(cleaned_customer)
+
+    return processed_customers
+
+
+def calculate_average_age(
+    customers: list[dict[str, Any]],
+) -> float:
+    """
+    Calculate the average age of customers.
+
+    Args:
+        customers: Customer records.
+
+    Returns:
+        Average customer age.
+
+    Raises:
+        ValueError: If there are no customers.
+    """
+    if not customers:
+        raise ValueError("No customers available.")
+
+    total_age = sum(customer["age"] for customer in customers)
+
+    return total_age / len(customers)
+
+
+def main() -> None:
+    """
+    Run the customer data processing pipeline.
+    """
+
+    customers = [
+        {
+            "id": 1,
+            "name": "  john doe  ",
+            "age": 25,
+            "email": " JOHN@EXAMPLE.COM ",
+        },
+        {
+            "id": 2,
+            "name": "jane smith",
+            "age": 17,
+            "email": "jane@example.com",
+        },
+        {
+            "id": 3,
+            "name": "  bob brown",
+            "age": 30,
+            "email": "BOB@EXAMPLE.COM",
+        },
+    ]
+
+    processed_customers = process_customers(customers)
+
+    adult_customers = filter_adult_customers(processed_customers)
+
+    average_age = calculate_average_age(adult_customers)
+
+    print("Processed Customers:")
+    print(processed_customers)
+
+    print("\nAdult Customers:")
+    print(adult_customers)
+
+    print(f"\nAverage Age: {average_age:.2f}")
+
+
+if __name__ == "__main__":
+    main()
