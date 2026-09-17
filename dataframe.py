@@ -68,3 +68,46 @@ def add_columns():
     sort_rows = subset_rows.sort_values("new_col", ascending=False)
     subset_columns = sort_rows[["col3", "new_col"]]
     subset_columns.head() # Show result
+
+def summarize_num_data():
+    df['col1'].mean() # getting mean
+    df['col1'].median() # getting median
+    df['col1'].mode() # getting mode
+    df['col1'].min() # getting minimum
+    df['col1'].max() # getting maximum
+    df['col1'].var() # getting variance
+    df['col1'].std() # getting standard deviation
+
+    # The .agg(.method)
+    def pct30(column):
+        return column.quantile(0.3)
+    # Apply the method
+    df['col1'].agg(pct30)
+
+    # If multiple columns
+    df[['col1', 'col2']].agg(pct30)
+
+    # If multiple summaries
+    def pct40(column):
+            return column.quantile(0.4)
+
+    df['col1'].agg([pct30, pct40])
+
+    # Cumulative Sum
+    df['col1'].cumsum()
+
+    # Cumulative Statistics
+    df['col1'].cummax()
+    df['col1'].cummin()
+    df['col1'].cumprod()
+
+def drop_duplicates():
+    df.drop_duplicates(subset="col1") # removing one
+
+    df.drop_duplicates(subset=["col1", "col2"]) # removing duplicate pairs
+
+
+def value_counts():
+    df["col1"].value_counts()
+    df["col1"].value_counts(sort=True) # sorted
+    df["col1"].value_counts(normalize=True) # proportion
