@@ -106,8 +106,41 @@ def drop_duplicates():
 
     df.drop_duplicates(subset=["col1", "col2"]) # removing duplicate pairs
 
-
 def value_counts():
     df["col1"].value_counts()
     df["col1"].value_counts(sort=True) # sorted
     df["col1"].value_counts(normalize=True) # proportion
+
+def summary_group():
+    df[df["col1"] == "info1"]["col2"].mean() # with mean
+
+    # grouped summary
+    df.groupby("col1")["col2"].mean()
+
+    # Multiple grouped summaries
+    df.groupby("col1")["col2"].agg([min, max, sum])
+
+    # Multiple variables
+    df.groupby(["col1", "col2"])["col3"].mean()
+
+    # Many groups and summaries
+    df.groupby(["col1", "col2"])[["col3", "col4"]].mean()
+
+def pivot_table():
+    # pivot table
+    df.pivot_table(values="col1", index="col2")
+
+    # addfunc
+    df.pivot_table(values="col1", index="col2", aggfunc="median")
+
+    # multiple stats
+    df.pivot_table(values="col1", index="col2", aggfunc=["median", "mean"])
+
+    # pivot on two variables
+    df.pivot_table(values="col1", index="col2", columns="col3")
+
+    # filling missing values in pivot tables
+    df.pivot_table(values="col1", index="col2", columns="col3", fill_value=0)
+
+    # Summing with pivot tables
+    df.pivot_table(values="col1", index="col2", columns="col3", fill_value=0, margin=True)
